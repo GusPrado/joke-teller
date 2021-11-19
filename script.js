@@ -105,37 +105,42 @@ const VoiceRSS = {
   },
 };
 
-// const test = () => {
-//   VoiceRSS.speech({
-//     // key: 'YOUR_API_KEY_HERE',
-//     src: 'Hello, world!',
-//     hl: 'en-us',
-//     v: 'John',
-//     r: 0,
-//     c: 'mp3',
-//     f: '44khz_16bit_stereo',
-//     ssml: false,
-//   });
-// };
+const toggleButton = () => {
+  button.disabled = !button.disabled;
+};
 
-// test();
+const tellMe = (joke) => {
+  VoiceRSS.speech({
+    // key: 'YOUR_API_KEY_HERE',
+    src: joke,
+    hl: 'en-us',
+    v: 'John',
+    r: 0,
+    c: 'mp3',
+    f: '44khz_16bit_stereo',
+    ssml: false,
+  });
+};
 
 const getJokes = async () => {
   let joke = '';
-  const apiUrl =
-    'https://v2.jokeapi.dev/joke/Programming?blacklistFlags=nsfw,religious,political,racist,sexist,explicit';
-  const response = await fetch(apiUrl);
-  const data = await response.json();
-  if (data.setup) {
-    jooke = `${data.setup} ... ${data.delivery}`;
-  } else {
-    joke = data.joke;
-  }
 
   try {
+    const apiUrl =
+      'https://v2.jokeapi.dev/joke/Programming?blacklistFlags=nsfw,religious,political,racist,sexist,explicit';
+    const response = await fetch(apiUrl);
+    const data = await response.json();
+    if (data.setup) {
+      joke = `${data.setup} ... ${data.delivery}`;
+    } else {
+      joke = data.joke;
+    }
+    tellMe(joke);
+    toggleButton();
   } catch (err) {
     console.log('catch error', err);
   }
 };
 
-getJokes();
+button.addEventListener('click', getJokes);
+audioEl.addEventListener('ended', toggleButton);
